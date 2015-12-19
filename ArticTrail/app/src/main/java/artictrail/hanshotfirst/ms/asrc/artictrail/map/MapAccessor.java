@@ -3,6 +3,7 @@ package artictrail.hanshotfirst.ms.asrc.artictrail.map;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 
@@ -16,6 +17,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,12 +39,14 @@ public class MapAccessor implements Serializable {
     private int top = 0;
     private int destinationPointId;
     private volatile boolean destinationEnabled = false;
+    private Location destinationLocation;
+    private Polyline pathLine;
 
     private MapAccessor() {
         super();
 
         markers = new Marker[10000];
-        destinationPointId = 0;
+        destinationPointId = -1;
     }
 
     public static synchronized MapAccessor getInstance() {
@@ -63,14 +68,30 @@ public class MapAccessor implements Serializable {
                 @Override
                 public void onMapClick(LatLng latLng) {
                     if (destinationEnabled) {
-                        Location l = new Location("Destination");
-                        l.setLatitude(latLng.latitude);
-                        l.setLongitude(latLng.longitude);
-                        if (destinationPointId > 0) {
+                        if(pathLine != null) {
+                            pathLine.remove();
+                        }
+                        destinationLocation = new Location("Destination");
+                        destinationLocation.setLatitude(latLng.latitude);
+                        destinationLocation.setLongitude(latLng.longitude);
+                        if (destinationPointId >= 0) {
                             removePointFromMap(destinationPointId);
                         }
-                        destinationPointId = addPointToMap(l, "Destination", LocationType.DESTINATION);
+                        destinationPointId = addPointToMap(destinationLocation, "Destination", LocationType.DESTINATION);
                         destinationEnabled = false;
+
+                        Location currentLocation = getCurrentLocation();
+
+                        PolylineOptions path =
+                                new PolylineOptions().add(
+                                        new LatLng(currentLocation.getLatitude(),
+                                                currentLocation.getLongitude()),
+                                        new LatLng(destinationLocation.getLatitude(),
+                                                destinationLocation.getLongitude()))
+                                        .width(5).color(Color.RED);
+
+
+                        pathLine = mGoogleMap.addPolyline(path);
                     }
                 }
             });
@@ -128,7 +149,7 @@ public class MapAccessor implements Serializable {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
                 .zoom(18)                   // Sets the zoom
-                .bearing(90)                // Sets the orientation of the camera to east
+                .bearing(0)                // Sets the orientation of the camera to east
                 .tilt(0)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
 
