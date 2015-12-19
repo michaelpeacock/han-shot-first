@@ -15,6 +15,9 @@ public class Prey extends LocationEntity {
     @DatabaseField(columnName = "name")
     private String name;
 
+    @DatabaseField(columnName = "description")
+    private String description;
+
     @DatabaseField(columnName = "image_path")
     private String imagePath;
 
@@ -47,5 +50,13 @@ public class Prey extends LocationEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
