@@ -35,7 +35,7 @@ public class MapAccessor implements Serializable {
     private Marker[] markers;
     private int top = 0;
     private int destinationPointId;
-    private boolean destinationEnabled = false;
+    private volatile boolean destinationEnabled = false;
 
     private MapAccessor() {
         super();
@@ -136,6 +136,8 @@ public class MapAccessor implements Serializable {
 
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.getUiSettings().setCompassEnabled(true);
+        mGoogleMap.setBuildingsEnabled(true);
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
     public boolean checkGooglePlayServices(Context context) {
