@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.R;
+import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Prey;
 
 /**
@@ -40,16 +41,24 @@ public class HunterKillDialog extends Dialog implements
     private ImageView kill_image;
     private File storageDir;
     private File photoFile;
+    private DatabaseManager database_manager;
 
 
     static final int REQUEST_TAKE_PHOTO = 1;
 
-    public HunterKillDialog(Activity a) {
+    public HunterKillDialog(Activity a,
+                            DatabaseManager db_mgr,
+                            double lat,
+                            double lon ) {
         super(a);
         // TODO Auto-generated constructor stub
         this.parent_activity = a;
 
+        database_manager = db_mgr;
+
         current_prey_entry = new Prey();
+        current_prey_entry.setLatitude(lat);
+        current_prey_entry.setLongitude(lon);
 
 //        current_prey_entry.setLatitude();
     }
@@ -108,12 +117,14 @@ public class HunterKillDialog extends Dialog implements
 
     private void doSave() {
         current_prey_entry.setName(title_text.getText().toString());
+        current_prey_entry.setDescription(description_text.getText().toString());
 
         if ( storageDir.getAbsolutePath() != null ) {
             current_prey_entry.setImagePath(storageDir.getAbsolutePath());
         }
 
-        // save to database
+        // save to database  //TODO: Primary User??
+        database_manager.getPreyTable().create(current_prey_entry);
     }
 
     private void doCameraAction() {

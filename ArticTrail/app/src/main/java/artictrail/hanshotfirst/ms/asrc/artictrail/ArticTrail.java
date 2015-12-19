@@ -92,7 +92,16 @@ public class ArticTrail extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hkd = new HunterKillDialog(ArticTrail.this);
+                Location location = getCurrentLocation();
+                double lat = 0, lon = 0;
+                if ( location != null ) {
+                    lat = location.getLatitude();
+                    lon = location.getLongitude();
+                }
+                hkd = new HunterKillDialog(ArticTrail.this,
+                        mDatabaseManager,
+                        lat,
+                        lon);
                 hkd.show();
 
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
