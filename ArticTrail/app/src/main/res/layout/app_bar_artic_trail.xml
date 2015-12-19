@@ -72,7 +72,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_artic_trail" />
     <LinearLayout
         android:id="@+id/hunt_view"
         android:visibility="visible"
@@ -179,13 +178,6 @@
             android:layout_margin="@dimen/nav_header_vertical_spacing"
             android:src="@mipmap/fisherman_on_boat" />
     </LinearLayout>
-
-
-
-
-
-
-
 
 
 </android.support.design.widget.CoordinatorLayout>
