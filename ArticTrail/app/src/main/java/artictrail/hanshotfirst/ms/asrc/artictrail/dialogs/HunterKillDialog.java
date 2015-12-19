@@ -69,8 +69,14 @@ public class HunterKillDialog extends Dialog implements
     public void setKillImage() {
         Log.d("ArcticTrail","In setKillImage: photoFile.getAbsolutePath(): " + photoFile.getAbsolutePath());
         Bitmap kill_bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+        int srcWidth = kill_bitmap.getWidth();
+        int srcHeight = kill_bitmap.getHeight();
+        int dstWidth = (int)(srcWidth*0.6f);
+        int dstHeight = (int)(srcHeight*0.6f);
+        Bitmap dstBitmap = Bitmap.createScaledBitmap(kill_bitmap, dstWidth, dstHeight, true);
+
         if ( kill_bitmap != null ) {
-            kill_image.setImageBitmap(kill_bitmap);
+            kill_image.setImageBitmap(dstBitmap);
             galleryAddPic();
         }
         else {

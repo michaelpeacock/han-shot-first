@@ -1,51 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/kill_title"
-        android:maxLines="1"
-        android:hint="Title"
-        />
+        android:layout_gravity="center_horizontal"
+        android:hint="Title"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/kill_description"
-        android:lines="4"
-        android:maxLines="4"
-        android:hint="Description"
-        android:inputType="textMultiLine"
-        android:layout_below="@id/kill_title"
-        />
+        android:layout_weight="0.0005"
+        android:hint="Description"/>
 
     <ImageButton
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@android:drawable/ic_menu_camera"
-        android:id="@+id/camera_button"
-        android:layout_below="@id/kill_description"
-        android:layout_alignParentLeft="true"
-        android:minHeight="40dp"/>
+        android:id="@+id/camera_button" />
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/kill_image"
-        android:contentDescription="Kill picture"
-        android:layout_below="@id/camera_button"
-        android:minHeight="160dp"/>
+        android:layout_weight="1.0"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="Kill picture" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/kill_image"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:weightSum="0.1"
         android:gravity="right">
+
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
@@ -59,4 +53,4 @@
             android:text="Cancel"
             android:id="@+id/cancel_action" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
