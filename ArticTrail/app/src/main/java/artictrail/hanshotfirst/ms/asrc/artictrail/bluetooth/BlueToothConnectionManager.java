@@ -2,6 +2,7 @@ package artictrail.hanshotfirst.ms.asrc.artictrail.bluetooth;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import eu.hgross.blaubot.messaging.IBlaubotMessageListener;
  */
 public class BlueToothConnectionManager implements ILifecycleListener {
 
+    private static String TAG = BlueToothConnectionManager.class.getSimpleName();
     private static BlueToothConnectionManager instance;
     private BlaubotAndroid blaubot ;
     private IBlaubotChannel channel;
@@ -42,6 +44,7 @@ public class BlueToothConnectionManager implements ILifecycleListener {
 
     @Override
     public void onConnected() {
+        Log.d(TAG, "Bluetooh Connected");
         mConnected = true;
         for(BTConnectionListenerIF listener : mConnetionListeners) {
             listener.onConnected();
@@ -67,6 +70,7 @@ public class BlueToothConnectionManager implements ILifecycleListener {
 
     @Override
     public void onDeviceJoined(IBlaubotDevice blaubotDevice) {
+        Log.d(TAG, "Device joined ==" + blaubotDevice.getReadableName());
         for(BTConnectionListenerIF listener : mConnetionListeners) {
             listener.onDeviceJoined(blaubotDevice);
         }
