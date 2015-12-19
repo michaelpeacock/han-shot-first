@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.location.LocationManager;
 import android.location.Criteria;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.util.UUID;
@@ -54,6 +55,8 @@ import eu.hgross.blaubot.core.ILifecycleListener;
 import eu.hgross.blaubot.messaging.BlaubotMessage;
 import eu.hgross.blaubot.messaging.IBlaubotChannel;
 import eu.hgross.blaubot.messaging.IBlaubotMessageListener;
+
+import static android.view.View.VISIBLE;
 
 public class ArticTrail extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -237,9 +240,25 @@ public class ArticTrail extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (item.getItemId()) {
+            case R.id.boat_mode:
+                showBoatMode();
+                return true;
+            case R.id.hunt_mode:
+                showHuntMode();
+                return true;
+            case R.id.save_current_location:
+                //do some cool stuff
+                return true;
+            case R.id.sos:
+                //help somebody
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
 
-        return super.onOptionsItemSelected(item);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -384,4 +403,35 @@ public class ArticTrail extends AppCompatActivity
         super.onDestroy();
         mDatabaseManager.onDestroy();
     }
+
+    private void showBoatMode()
+    {
+        LinearLayout huntlinearLayout = (LinearLayout)findViewById(R.id.hunt_view);
+        LinearLayout boatlinearLayout = (LinearLayout)findViewById(R.id.boat_view);
+        if(boatlinearLayout.getVisibility() == VISIBLE) {
+            boatlinearLayout.setVisibility(View.INVISIBLE);
+            huntlinearLayout.setVisibility(View.INVISIBLE);
+        }
+
+        else {
+            huntlinearLayout.setVisibility(View.INVISIBLE);
+            boatlinearLayout.setVisibility(VISIBLE);
+        }
+
+    }
+    private void showHuntMode()
+    {
+        LinearLayout huntlinearLayout = (LinearLayout)findViewById(R.id.hunt_view);
+        LinearLayout boatlinearLayout = (LinearLayout)findViewById(R.id.boat_view);
+        if(huntlinearLayout.getVisibility() == VISIBLE) {
+            boatlinearLayout.setVisibility(View.INVISIBLE);
+            huntlinearLayout.setVisibility(View.INVISIBLE);
+
+        }
+        else {
+            boatlinearLayout.setVisibility(View.INVISIBLE);
+            huntlinearLayout.setVisibility(VISIBLE);
+        }
+    }
+
 }
