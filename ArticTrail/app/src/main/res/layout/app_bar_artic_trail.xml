@@ -77,7 +77,7 @@
             android:src="@mipmap/deer_in_scope" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/sigtings"
+            android:id="@+id/sightings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
