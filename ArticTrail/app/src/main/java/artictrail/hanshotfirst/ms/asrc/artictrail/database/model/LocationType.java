@@ -8,6 +8,7 @@ public enum LocationType {
     ME,
     FAV,
     DOCK,
-    HUNTER
+    HUNTER,
+    DESTINATION
 
 }

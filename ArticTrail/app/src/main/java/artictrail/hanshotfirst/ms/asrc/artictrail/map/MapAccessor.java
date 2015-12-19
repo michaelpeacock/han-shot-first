@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -15,16 +14,41 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.Random;
+
+import artictrail.hanshotfirst.ms.asrc.artictrail.R;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
 
-public class MapAccessor {
+public class MapAccessor implements Serializable {
 
+    private static MapAccessor instance;
     private GoogleMap mGoogleMap;
     public GoogleApiClient mClient;
     private Context mContext;
     private static int REQUEST_CODE_RECOVER_PLAY_SERVICES = 200;
+    private Marker[] markers;
+    private int top = 0;
+    private int destinationPointId;
+    private boolean destinationEnabled = false;
+
+    private MapAccessor() {
+        super();
+
+        markers = new Marker[10000];
+        destinationPointId = 0;
+    }
+
+    public static synchronized MapAccessor getInstance() {
+        if(instance == null)
+            instance = new MapAccessor();
+        return instance;
+    }
 
     public void addMap(GoogleMap map) {
         mGoogleMap = map;
@@ -35,6 +59,21 @@ public class MapAccessor {
         }
         else {
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    if (destinationEnabled) {
+                        Location l = new Location("Destination");
+                        l.setLatitude(latLng.latitude);
+                        l.setLongitude(latLng.longitude);
+                        if (destinationPointId > 0) {
+                            removePointFromMap(destinationPointId);
+                        }
+                        destinationPointId = addPointToMap(l, "Destination", LocationType.DESTINATION);
+                        destinationEnabled = false;
+                    }
+                }
+            });
         }
     }
 
@@ -44,7 +83,7 @@ public class MapAccessor {
         }
     }
 
-    public void addPointToMap(Location location, String title, LocationType locationType) {
+    public int addPointToMap(Location location, String title, LocationType locationType) {
         // create marker
         MarkerOptions marker = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title(title);
@@ -52,7 +91,7 @@ public class MapAccessor {
         switch(locationType)
         {
             case ME:
-                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.darth_vader));
                 break;
             case DOCK:
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
@@ -60,12 +99,26 @@ public class MapAccessor {
             case FAV:
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 break;
+            case DESTINATION:
+                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                break;
+            case HUNTER:
+                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.boba_fett));
+                break;
             default:
                 break;
         }
 
         // adding marker
-        mGoogleMap.addMarker(marker);
+        Marker m = mGoogleMap.addMarker(marker);
+        markers[top] = m;
+        top++;
+
+        return(top - 1);
+    }
+
+    public void removePointFromMap(int markerId) {
+        markers[markerId].remove();
     }
 
     public void centerMapOnCurrentLocation(Location location) {
@@ -102,5 +155,20 @@ public class MapAccessor {
                 .build();
 
         mContext = context;
+    }
+
+    public Location getCurrentLocation() {
+        Location ret = null;
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        } else {
+            ret = LocationServices.FusedLocationApi.getLastLocation(MapAccessor.getInstance().mClient);
+        }
+
+        return ret;
+    }
+
+    public void setDestinationToggle(boolean isDestinationValid) {
+        destinationEnabled = isDestinationValid;
     }
 }
