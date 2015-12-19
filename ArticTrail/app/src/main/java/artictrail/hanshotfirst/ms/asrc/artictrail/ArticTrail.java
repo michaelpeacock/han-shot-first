@@ -47,6 +47,7 @@ import java.util.UUID;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SaveLocationDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
@@ -72,6 +73,7 @@ public class ArticTrail extends AppCompatActivity
 
     private HunterKillDialog hunter_kill_dialog;
     private SightingsDialog sightings_dialog;
+    private SaveLocationDialog save_location_dialog;
 
     static final int REQUEST_KILL_IMAGE_CAPTURE = 1;
     static final int REQUEST_SIGHTINGS_IMAGE_CAPTURE = 2;
@@ -100,7 +102,7 @@ public class ArticTrail extends AppCompatActivity
             public void onClick(View view) {
                 Location location = MapAccessor.getInstance().getCurrentLocation();
                 double lat = 0, lon = 0;
-                if ( location != null ) {
+                if (location != null) {
                     lat = location.getLatitude();
                     lon = location.getLongitude();
                 }
@@ -313,7 +315,7 @@ public class ArticTrail extends AppCompatActivity
                 showHuntMode();
                 return true;
             case R.id.save_current_location:
-                //do some cool stuff
+                performSaveLocation();
                 return true;
             case R.id.sos:
                 //help somebody
@@ -486,6 +488,23 @@ public class ArticTrail extends AppCompatActivity
         else {
             boatlinearLayout.setVisibility(View.INVISIBLE);
             huntlinearLayout.setVisibility(VISIBLE);
+        }
+    }
+
+    private void performSaveLocation()
+    {
+        Location location = MapAccessor.getInstance().getCurrentLocation();
+        double lat = 0, lon = 0;
+        if (location != null) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+
+            save_location_dialog = new SaveLocationDialog(
+                    ArticTrail.this,
+                    mDatabaseManager,
+                    lat,
+                    lon);
+            save_location_dialog.show();
         }
     }
 
