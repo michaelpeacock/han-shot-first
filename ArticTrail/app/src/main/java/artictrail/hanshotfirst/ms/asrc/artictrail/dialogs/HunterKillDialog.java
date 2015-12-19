@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,9 +39,9 @@ public class HunterKillDialog extends Dialog implements
     String current_photo_path;
     private ImageView kill_image;
     private File storageDir;
+    private File photoFile;
 
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
 
     public HunterKillDialog(Activity a) {
@@ -54,6 +53,22 @@ public class HunterKillDialog extends Dialog implements
 
 //        current_prey_entry.setLatitude();
     }
+
+    public void setKillImage() {
+        Log.d("ArcticTrail","In setKillImage: photoFile.getAbsolutePath(): " + photoFile.getAbsolutePath());
+        Bitmap kill_bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+        if ( kill_bitmap != null ) {
+            kill_image.setImageBitmap(kill_bitmap);
+            galleryAddPic();
+        }
+        else {
+            Log.d("ArcticTrail", "kill_bitmap is NULL!!!");
+        }
+    }
+
+//    public void setKillImage(Bitmap imageBitmap) {
+//        kill_image.setImageBitmap(imageBitmap);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +83,8 @@ public class HunterKillDialog extends Dialog implements
         ok.setOnClickListener(this);
         cancel.setOnClickListener(this);
         camera_button.setOnClickListener(this);
+        kill_image = (ImageView) findViewById(R.id.kill_image);
+
 
     }
 
@@ -91,7 +108,10 @@ public class HunterKillDialog extends Dialog implements
 
     private void doSave() {
         current_prey_entry.setName(title_text.getText().toString());
-        current_prey_entry.setImagePath(storageDir.getAbsolutePath());
+
+        if ( storageDir.getAbsolutePath() != null ) {
+            current_prey_entry.setImagePath(storageDir.getAbsolutePath());
+        }
 
         // save to database
     }
@@ -101,28 +121,21 @@ public class HunterKillDialog extends Dialog implements
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(parent_activity.getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
+            photoFile = null;
             try {
                 photoFile = createImageFile();
+                Log.d("ArcticTrail","No photoFile Exception");
             } catch (IOException ex) {
                 // Error occurred while creating the File
+                Log.d("ArcticTrail","photoFile EXCEPTION!!!");
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+                Log.d("ArcticTrail", "photoFile.getAbsolutePath(): " + photoFile.getAbsolutePath());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile));
                 parent_activity.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-
-                galleryAddPic();
             }
-        }
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            kill_image.setImageBitmap(imageBitmap);
         }
     }
 
@@ -142,12 +155,16 @@ public class HunterKillDialog extends Dialog implements
 
         // Save a file: path for use with ACTION_VIEW intents
         current_photo_path = "file:" + image.getAbsolutePath();
+        Log.d("ArcticTrail","current_photo_path: " + current_photo_path );
+
         return image;
     }
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(current_photo_path);
+        Log.d("ArcticTrail","In galleryAddPic(): current_photo_path: " + current_photo_path);
+        Log.d("ArcticTrail","In galleryAddPic(): f.getAbsolutePath(): " + f.getAbsolutePath());
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         parent_activity.sendBroadcast(mediaScanIntent);

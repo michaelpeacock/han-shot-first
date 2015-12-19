@@ -2,8 +2,11 @@ package artictrail.hanshotfirst.ms.asrc.artictrail;
 
 import android.*;
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,6 +52,10 @@ public class ArticTrail extends AppCompatActivity
 
     private MapAccessor mMapAccessor;
 
+    private HunterKillDialog hkd;
+
+    static final int REQUEST_KILL_IMAGE_CAPTURE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,13 +69,14 @@ public class ArticTrail extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HunterKillDialog hkd = new HunterKillDialog(ArticTrail.this);
+                hkd = new HunterKillDialog(ArticTrail.this);
                 hkd.show();
 
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
         });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -89,6 +97,29 @@ public class ArticTrail extends AppCompatActivity
         }
 
         mMapAccessor.initialize(this, this, this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_KILL_IMAGE_CAPTURE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.d("ArcticTrail", "In onActivityResult(): Kill Image OK");
+                    hkd.setKillImage();
+//                    if ( data != null ) {
+//                        Bundle extras = data.getExtras();
+//                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+//                        hkd.setKillImage(imageBitmap);
+//                    }
+//                    else
+//                    {
+//                        Log.d("ArcticTrail", "Kill Image data NULL!!!");
+//                    }
+                } else {
+                    Log.d("ArcticTrail", "Kill Image Result NOT OK!!!");
+                }
+
+        }
     }
 
     @Override
