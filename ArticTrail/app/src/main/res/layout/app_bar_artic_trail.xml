@@ -21,12 +21,111 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+    <LinearLayout
+        android:id="@+id/hunt_view"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            app:backgroundTint="@color/orange"
+            android:scaleType="center"
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/walking_with_stick" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/kill"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            app:backgroundTint="@color/orange"
+            android:padding="20dp"
+            android:scaleType="center"
+
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/deer_in_scope" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/sigtings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:scaleType="center"
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/deer_silhouette" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/stay_put"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:scaleType="center"
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/hunter_pointing_gun" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/boat_view"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/trail_boat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:scaleType="center"
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/dock" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fish_catch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:scaleType="center"
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/caught_fish" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/hazards"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:scaleType="center"
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/fish" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/stay_put_fish"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:scaleType="center"
+
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@mipmap/fisherman_on_boat" />
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

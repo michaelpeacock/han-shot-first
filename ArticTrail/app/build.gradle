@@ -27,4 +27,8 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.google.android.gms:play-services:8.4.0'
     compile files('src/main/libs/gson-2.2.4.jar')
+    compile 'com.j256.ormlite:ormlite-android:4.+'
+    compile 'joda-time:joda-time:2.+'
+    compile 'com.android.support:support-annotations:23.+'
+    compile 'eu.hgross:blaubot-android:2+'
 }
