@@ -8,25 +8,25 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/kill_title"
         android:layout_gravity="center_horizontal" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText2"
+        android:id="@+id/kill_description"
         android:layout_weight="0.0005" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:icon="@android:drawable/ic_menu_camera"
-        android:id="@+id/button" />
+        android:id="@+id/camera_button" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/imageView2"
+        android:id="@+id/kill_image"
         android:layout_weight="1.0"
         android:layout_gravity="center_horizontal"
         android:contentDescription="Kill picture" />
@@ -43,12 +43,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OK"
-            android:id="@+id/button2" />
+            android:id="@+id/ok_button" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:id="@+id/button3" />
+            android:id="@+id/cancel_action" />
     </LinearLayout>
 </LinearLayout>
