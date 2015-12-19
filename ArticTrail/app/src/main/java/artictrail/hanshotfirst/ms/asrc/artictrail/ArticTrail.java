@@ -2,6 +2,7 @@ package artictrail.hanshotfirst.ms.asrc.artictrail;
 
 import android.*;
 import android.Manifest;
+import android.app.ActionBar;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
@@ -88,6 +89,7 @@ public class ArticTrail extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 HunterKillDialog hkd = new HunterKillDialog(ArticTrail.this);
+                hkd.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT );
                 hkd.show();
 
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -103,6 +105,7 @@ public class ArticTrail extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemIconTintList(null);
 
         try {
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -116,7 +119,7 @@ public class ArticTrail extends AppCompatActivity
         mMapAccessor.initialize(this, this, this);
 
         //Notification Stuff
-        startService(new Intent(getBaseContext(), CollisionNotificationService.class));
+        //startService(new Intent(getBaseContext(), CollisionNotificationService.class));
         initBluetooth();
 
 
@@ -248,13 +251,13 @@ public class ArticTrail extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_kills) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_locations) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_help) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_user_info) {
 
         } else if (id == R.id.nav_share) {
 
