@@ -48,6 +48,7 @@ import java.util.UUID;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.PreyListDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
@@ -339,6 +340,8 @@ public class ArticTrail extends AppCompatActivity
 
         if (id == R.id.nav_kills) {
             // Handle the camera action
+            PreyListDialog pld = new PreyListDialog(this, mDatabaseManager);
+            pld.show();
         } else if (id == R.id.nav_locations) {
 
         } else if (id == R.id.nav_help) {
