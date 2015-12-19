@@ -82,14 +82,20 @@ public class MapAccessor implements Serializable {
 
                         Location currentLocation = getCurrentLocation();
 
+                        //Generate random points between start and destination
                         PolylineOptions path =
                                 new PolylineOptions().add(
                                         new LatLng(currentLocation.getLatitude(),
                                                 currentLocation.getLongitude()),
+                                        new LatLng(currentLocation.getLatitude() + .00025,
+                                                currentLocation.getLongitude()),
+                                        new LatLng(currentLocation.getLatitude() + .00025,
+                                                currentLocation.getLongitude() + .00025),
+                                        new LatLng(destinationLocation.getLatitude() - .000025,
+                                                currentLocation.getLongitude() + .00025),
                                         new LatLng(destinationLocation.getLatitude(),
                                                 destinationLocation.getLongitude()))
                                         .width(5).color(Color.RED);
-
 
                         pathLine = mGoogleMap.addPolyline(path);
                     }
