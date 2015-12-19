@@ -129,9 +129,10 @@ public class HunterKillDialog extends Dialog implements
         current_prey_entry.setDescription(description_text.getText().toString());
         current_prey_entry.setType(PreyType.HUNT);
 
-        if ( storageDir.getAbsolutePath() != null ) {
+        if (photoFile != null &&  storageDir.getAbsolutePath() != null ) {
             current_prey_entry.setImagePath(storageDir.getAbsolutePath());
         }
+
 
         // save to database  //TODO: Primary User??
         database_manager.getPreyTable().create(current_prey_entry);
