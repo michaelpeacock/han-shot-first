@@ -4,29 +4,31 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import"
+            android:id="@+id/nav_kills"
+            android:icon="@mipmap/dual_red_light_sabers"
+            android:title="Kills"
             app:showAsAction="never"/>
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery"
+            android:id="@+id/nav_locations"
+            android:icon="@mipmap/xwing_location_image"
+            android:title="Locations"
             app:showAsAction="never"/>
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow"
+            android:id="@+id/nav_help"
+            android:icon="@mipmap/r2d2_help_image"
+            android:title="Help"
             app:showAsAction="never"/>
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools"
+            android:id="@+id/nav_user_info"
+            android:icon="@mipmap/yoda_account_image"
+            android:title="Account"
             app:showAsAction="never"/>
+
     </group>
 
-    <item android:title="Communicate">
-        <menu>
+    <item android:title="Feeds">
+        <menu
+            android:id="@+id/nav_feeds_menu">
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"

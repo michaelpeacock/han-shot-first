@@ -2,6 +2,7 @@ package artictrail.hanshotfirst.ms.asrc.artictrail;
 
 import android.*;
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -52,6 +53,7 @@ import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.CollisionNotificationService;
+import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.PeriodicMutex;
 import eu.hgross.blaubot.android.BlaubotAndroid;
 import eu.hgross.blaubot.android.BlaubotAndroidFactory;
 import eu.hgross.blaubot.core.IBlaubotDevice;
@@ -69,8 +71,6 @@ public class ArticTrail extends AppCompatActivity
 
     private static final String TAG = ArticTrail.class.getSimpleName();
 
-    private MapAccessor mMapAccessor;
-
     private HunterKillDialog hunter_kill_dialog;
     private SightingsDialog sightings_dialog;
     private SaveLocationDialog save_location_dialog;
@@ -80,8 +80,9 @@ public class ArticTrail extends AppCompatActivity
     private BlaubotAndroid blaubot ;
     private IBlaubotChannel channel;
     private boolean mConnected = false;
-
+    private int mMarkerId = 0;
     private DatabaseManager mDatabaseManager;
+    private Intent collisionService;
 
     public ArticTrail() {
         mDatabaseManager = new DatabaseManager(this);
@@ -116,6 +117,13 @@ public class ArticTrail extends AppCompatActivity
             }
         });
 
+        FloatingActionButton init_trip = (FloatingActionButton) findViewById(R.id.init_dest);
+        init_trip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MapAccessor.getInstance().setDestinationToggle(true);
+            }
+        });
 
         FloatingActionButton sightings_fab = (FloatingActionButton) findViewById(R.id.sightings);
         sightings_fab.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +154,7 @@ public class ArticTrail extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemIconTintList(null);
 
         try {
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -157,11 +166,7 @@ public class ArticTrail extends AppCompatActivity
         }
 
         MapAccessor.getInstance().initialize(this, this, this);
-
-        //Collision Detection
-        Intent collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
-        startService(collisionService);
-
+        
         initBluetooth();
 
 
@@ -334,13 +339,13 @@ public class ArticTrail extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_kills) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_locations) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_help) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_user_info) {
 
         } else if (id == R.id.nav_share) {
 
@@ -408,23 +413,13 @@ public class ArticTrail extends AppCompatActivity
 
         Location location = MapAccessor.getInstance().getCurrentLocation();
         if(location != null) {
-            MapAccessor.getInstance().centerMapOnCurrentLocation(location);
-            MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
-        }
+            if (mMarkerId > 0) {
+                MapAccessor.getInstance().removePointFromMap(mMarkerId);
+            }
 
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//        } else {
-//            Location location = LocationServices.FusedLocationApi.getLastLocation(
-//                    mMapAccessor.mClient);
-//
-//            if (location != null) {
-//                mMapAccessor.centerMapOnCurrentLocation(location);
-//
-//                mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
-//            }
-//        }
+            MapAccessor.getInstance().centerMapOnCurrentLocation(location);
+            //mMarkerId = MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
+        }
     }
 
     @Override
@@ -484,10 +479,19 @@ public class ArticTrail extends AppCompatActivity
             boatlinearLayout.setVisibility(View.INVISIBLE);
             huntlinearLayout.setVisibility(View.INVISIBLE);
 
+            PeriodicMutex.getInstance().setPeriodicInactive();
+            stopService(collisionService);
         }
         else {
             boatlinearLayout.setVisibility(View.INVISIBLE);
             huntlinearLayout.setVisibility(VISIBLE);
+
+            //Collision Detection
+            if (collisionService == null) {
+                collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
+            }
+            PeriodicMutex.getInstance().setPeriodicActive();
+            startService(collisionService);
         }
     }
 

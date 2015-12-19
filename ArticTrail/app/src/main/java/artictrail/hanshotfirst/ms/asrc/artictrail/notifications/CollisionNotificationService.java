@@ -39,6 +39,8 @@ public class CollisionNotificationService extends Service {
             mMarkerId = markerId;
         }
     }
+
+
     private Handler handler = new Handler();
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
@@ -46,6 +48,7 @@ public class CollisionNotificationService extends Service {
     private DatabaseManager mDatabaseManager;
     private MapAccessor mMapAccessor;
     private ArrayList<DbMarkerIdPair> pairs;
+    private Runnable periodic;
 
     public CollisionNotificationService() {
         super();
@@ -71,9 +74,13 @@ public class CollisionNotificationService extends Service {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationBuilder = new NotificationCompat.Builder(this);
 
-        Runnable runnable = new Runnable() {
+        periodic = new Runnable() {
             @Override
             public void run() {
+
+                if(!PeriodicMutex.getInstance().isPeriodicActive()) {
+                   return;
+                }
 
                 List<artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Location> locationList = mDatabaseManager.getLocationTable().queryForAll();
 
@@ -99,36 +106,45 @@ public class CollisionNotificationService extends Service {
                     DbMarkerIdPair dbPair = new DbMarkerIdPair(temp.getId(), pointId);
                     pairs.add(dbPair);
 
-                    Toast.makeText(getApplicationContext(),
-                            ""+myLocation.distanceTo(androidLocation), Toast.LENGTH_LONG).show();
+                    if(getApplicationContext() != null && myLocation != null && androidLocation != null) {
+                        if (myLocation.distanceTo(androidLocation) < 6) {
+                            mNotificationBuilder.setSmallIcon(R.drawable.ic_menu_share);
+                            mNotificationBuilder.setContentTitle("WARNING - Hunter Nearby");
+                            mNotificationBuilder.setContentText("Use caution");
+                            mNotificationBuilder.setVibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500});
+                            mNotificationBuilder.setLights(Color.RED, 3000, 3000);
+                            Uri alarmSound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.imperial_march);
+                            mNotificationBuilder.setSound(alarmSound);
 
-                    if (myLocation.distanceTo(androidLocation) < 6) {
-                        mNotificationBuilder.setSmallIcon(R.drawable.ic_menu_share);
-                        mNotificationBuilder.setContentTitle("WARNING - Hunter Nearby");
-                        mNotificationBuilder.setContentText("Use caution");
-                        mNotificationBuilder.setVibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500});
-                        mNotificationBuilder.setLights(Color.RED, 3000, 3000);
-                        Uri alarmSound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.imperial_march);
-                        mNotificationBuilder.setSound(alarmSound);
-
-                        mNotificationManager.notify(42, mNotificationBuilder.build());
+                            mNotificationManager.notify(42, mNotificationBuilder.build());
+                        }
                     }
                 }
 
-                handler.postDelayed(this, DETECTION_FREQUENCY);
+                if (PeriodicMutex.getInstance().isPeriodicActive()) {
+                    handler.postDelayed(this, DETECTION_FREQUENCY);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Collision Detection Stopped", Toast.LENGTH_LONG).show();
+                }
 
             }
         };
 
-        handler.postDelayed(runnable, DETECTION_FREQUENCY);
+        handler.postDelayed(periodic, DETECTION_FREQUENCY);
+
 
         return START_STICKY;
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Collision Detection Stopped", Toast.LENGTH_LONG).show();
+        Log.d("GARRY", "STOP");
+        for (DbMarkerIdPair p : pairs) {
+            MapAccessor.getInstance().removePointFromMap(p.mMarkerId);
+        }
     }
 }
 
