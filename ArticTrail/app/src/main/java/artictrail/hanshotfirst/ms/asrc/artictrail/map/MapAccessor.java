@@ -20,7 +20,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.Random;
 
+import artictrail.hanshotfirst.ms.asrc.artictrail.R;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
 
 public class MapAccessor implements Serializable {
@@ -32,11 +34,14 @@ public class MapAccessor implements Serializable {
     private static int REQUEST_CODE_RECOVER_PLAY_SERVICES = 200;
     private Marker[] markers;
     private int top = 0;
+    private int destinationPointId;
+    private boolean destinationEnabled = false;
 
     private MapAccessor() {
         super();
 
         markers = new Marker[10000];
+        destinationPointId = 0;
     }
 
     public static synchronized MapAccessor getInstance() {
@@ -54,6 +59,21 @@ public class MapAccessor implements Serializable {
         }
         else {
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    if (destinationEnabled) {
+                        Location l = new Location("Destination");
+                        l.setLatitude(latLng.latitude);
+                        l.setLongitude(latLng.longitude);
+                        if (destinationPointId > 0) {
+                            removePointFromMap(destinationPointId);
+                        }
+                        destinationPointId = addPointToMap(l, "Destination", LocationType.DESTINATION);
+                        destinationEnabled = false;
+                    }
+                }
+            });
         }
     }
 
@@ -71,13 +91,19 @@ public class MapAccessor implements Serializable {
         switch(locationType)
         {
             case ME:
-                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.darth_vader));
                 break;
             case DOCK:
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 break;
             case FAV:
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                break;
+            case DESTINATION:
+                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                break;
+            case HUNTER:
+                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.boba_fett));
                 break;
             default:
                 break;
@@ -140,5 +166,9 @@ public class MapAccessor implements Serializable {
         }
 
         return ret;
+    }
+
+    public void setDestinationToggle(boolean isDestinationValid) {
+        destinationEnabled = isDestinationValid;
     }
 }

@@ -99,19 +99,21 @@ public class CollisionNotificationService extends Service {
                     DbMarkerIdPair dbPair = new DbMarkerIdPair(temp.getId(), pointId);
                     pairs.add(dbPair);
 
-                    Toast.makeText(getApplicationContext(),
-                            ""+myLocation.distanceTo(androidLocation), Toast.LENGTH_LONG).show();
+                    if(getApplicationContext() != null && myLocation != null && androidLocation != null) {
+                        Toast.makeText(getApplicationContext(),
+                                "" + myLocation.distanceTo(androidLocation), Toast.LENGTH_LONG).show();
 
-                    if (myLocation.distanceTo(androidLocation) < 6) {
-                        mNotificationBuilder.setSmallIcon(R.drawable.ic_menu_share);
-                        mNotificationBuilder.setContentTitle("WARNING - Hunter Nearby");
-                        mNotificationBuilder.setContentText("Use caution");
-                        mNotificationBuilder.setVibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500});
-                        mNotificationBuilder.setLights(Color.RED, 3000, 3000);
-                        Uri alarmSound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.imperial_march);
-                        mNotificationBuilder.setSound(alarmSound);
+                        if (myLocation.distanceTo(androidLocation) < 6) {
+                            mNotificationBuilder.setSmallIcon(R.drawable.ic_menu_share);
+                            mNotificationBuilder.setContentTitle("WARNING - Hunter Nearby");
+                            mNotificationBuilder.setContentText("Use caution");
+                            mNotificationBuilder.setVibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500});
+                            mNotificationBuilder.setLights(Color.RED, 3000, 3000);
+                            Uri alarmSound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.imperial_march);
+                            mNotificationBuilder.setSound(alarmSound);
 
-                        mNotificationManager.notify(42, mNotificationBuilder.build());
+                            mNotificationManager.notify(42, mNotificationBuilder.build());
+                        }
                     }
                 }
 

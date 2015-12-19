@@ -73,7 +73,7 @@ public class ArticTrail extends AppCompatActivity
     private BlaubotAndroid blaubot ;
     private IBlaubotChannel channel;
     private boolean mConnected = false;
-
+    private int mMarkerId = 0;
     private DatabaseManager mDatabaseManager;
 
     public ArticTrail() {
@@ -379,8 +379,12 @@ public class ArticTrail extends AppCompatActivity
 
         Location location = MapAccessor.getInstance().getCurrentLocation();
         if(location != null) {
+            if (mMarkerId > 0) {
+                MapAccessor.getInstance().removePointFromMap(mMarkerId);
+            }
+
             MapAccessor.getInstance().centerMapOnCurrentLocation(location);
-            MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
+            mMarkerId = MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
         }
 
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
