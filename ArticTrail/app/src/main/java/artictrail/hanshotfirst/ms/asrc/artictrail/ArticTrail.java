@@ -62,8 +62,6 @@ public class ArticTrail extends AppCompatActivity
 
     private static final String TAG = ArticTrail.class.getSimpleName();
 
-    private MapAccessor mMapAccessor;
-
     private BlaubotAndroid blaubot ;
     private IBlaubotChannel channel;
     private boolean mConnected = false;
@@ -81,7 +79,7 @@ public class ArticTrail extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mMapAccessor = new MapAccessor();
+        MapAccessor.getInstance();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -113,10 +111,12 @@ public class ArticTrail extends AppCompatActivity
             e.printStackTrace();
         }
 
-        mMapAccessor.initialize(this, this, this);
+        MapAccessor.getInstance().initialize(this, this, this);
 
-        //Notification Stuff
-        startService(new Intent(getBaseContext(), CollisionNotificationService.class));
+        //Collision Detection
+        Intent collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
+        startService(collisionService);
+
         initBluetooth();
 
 
@@ -183,8 +183,8 @@ public class ArticTrail extends AppCompatActivity
                     }
                 });
 
-                Location location = getCurrentLocation();
-                if(location != null) {
+                Location location = MapAccessor.getInstance().getCurrentLocation();
+                if (location != null) {
                     double lat = location.getLatitude();
                     double lon = location.getLongitude();
 
@@ -210,7 +210,7 @@ public class ArticTrail extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap map) {
-        mMapAccessor.addMap(map);
+        MapAccessor.getInstance().addMap(map);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class ArticTrail extends AppCompatActivity
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mMapAccessor.mClient.connect();
+        MapAccessor.getInstance().mClient.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "ArticTrail Page", // TODO: Define a title for the content shown.
@@ -285,8 +285,8 @@ public class ArticTrail extends AppCompatActivity
                 Uri.parse("android-app://artictrail.hanshotfirst.ms.asrc.artictrail/http/host/path")
         );
 
-        if (mMapAccessor.mClient != null) {
-            mMapAccessor.mClient.connect();
+        if (MapAccessor.getInstance().mClient != null) {
+            MapAccessor.getInstance().mClient.connect();
         }
 
     }
@@ -308,7 +308,7 @@ public class ArticTrail extends AppCompatActivity
                 Uri.parse("android-app://artictrail.hanshotfirst.ms.asrc.artictrail/http/host/path")
         );
 
-        mMapAccessor.mClient.disconnect();
+        MapAccessor.getInstance().mClient.disconnect();
         stopService(new Intent(getBaseContext(), CollisionNotificationService.class));
 
         blaubot.stopBlaubot();
@@ -320,10 +320,10 @@ public class ArticTrail extends AppCompatActivity
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        Location location = getCurrentLocation();
+        Location location = MapAccessor.getInstance().getCurrentLocation();
         if(location != null) {
-            mMapAccessor.centerMapOnCurrentLocation(location);
-            mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
+            MapAccessor.getInstance().centerMapOnCurrentLocation(location);
+            MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
         }
 
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -339,16 +339,6 @@ public class ArticTrail extends AppCompatActivity
 //                mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
 //            }
 //        }
-    }
-
-    private Location getCurrentLocation() {
-        Location ret = null;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        } else {
-            ret = LocationServices.FusedLocationApi.getLastLocation(mMapAccessor.mClient);
-        }
-        return ret;
     }
 
     @Override
