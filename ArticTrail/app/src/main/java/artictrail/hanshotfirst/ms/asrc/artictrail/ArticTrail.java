@@ -28,6 +28,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -37,14 +38,15 @@ import android.location.Criteria;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
+import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
+
 public class ArticTrail extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
 
-    private GoogleMap mGoogleMap;
-    private GoogleApiClient mClient;
-    private static int REQUEST_CODE_RECOVER_PLAY_SERVICES = 200;
+    private MapAccessor mMapAccessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,8 @@ public class ArticTrail extends AppCompatActivity
         setContentView(R.layout.activity_artic_trail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mMapAccessor = new MapAccessor();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -80,45 +84,12 @@ public class ArticTrail extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if (checkGooglePlayServices()) {
-            buildGoogleApiClient();
-        }
-    }
-
-
-    private boolean checkGooglePlayServices() {
-
-        int checkGooglePlayServices = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(this);
-        if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
-			/*
-			* google play services is missing or update is required
-			*  return code could be
-			* SUCCESS,
-			* SERVICE_MISSING, SERVICE_VERSION_UPDATE_REQUIRED,
-			* SERVICE_DISABLED, SERVICE_INVALID.
-			*/
-            GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices,
-                    this, REQUEST_CODE_RECOVER_PLAY_SERVICES).show();
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
+        mMapAccessor.initialize(this, this, this);
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        mGoogleMap = map;
+        mMapAccessor.addMap(map);
     }
 
     @Override
@@ -184,7 +155,7 @@ public class ArticTrail extends AppCompatActivity
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mClient.connect();
+        mMapAccessor.mClient.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "ArticTrail Page", // TODO: Define a title for the content shown.
@@ -196,8 +167,8 @@ public class ArticTrail extends AppCompatActivity
                 Uri.parse("android-app://artictrail.hanshotfirst.ms.asrc.artictrail/http/host/path")
         );
 
-        if (mClient != null) {
-            mClient.connect();
+        if (mMapAccessor.mClient != null) {
+            mMapAccessor.mClient.connect();
         }
     }
 
@@ -217,50 +188,37 @@ public class ArticTrail extends AppCompatActivity
                 // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://artictrail.hanshotfirst.ms.asrc.artictrail/http/host/path")
         );
-        AppIndex.AppIndexApi.end(mClient, viewAction);
-        mClient.disconnect();
+
+        mMapAccessor.mClient.disconnect();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d("GARRY", "onConnected");
-
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            Log.d("GARRY", "Permission Issues");
-
         } else {
             Location location = LocationServices.FusedLocationApi.getLastLocation(
-                    mClient);
+                    mMapAccessor.mClient);
 
             if (location != null) {
-                Log.d("GARRY", "This is good");
+                mMapAccessor.centerMapOnCurrentLocation(location);
 
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(location.getLatitude(), location.getLongitude()), 13));
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                        .zoom(17)                   // Sets the zoom
-                        .bearing(90)                // Sets the orientation of the camera to east
-                        .tilt(40)                   // Sets the tilt of the camera to 30 degrees
-                        .build();                   // Creates a CameraPosition from the builder
-                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
             }
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d("GARRY", "onConnectionSuspended");
+        Log.d("ARCTIC_TRAIL", "onConnectionSuspended");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("GARRY", "onConnectionFailed");
+        Log.d("ARCTIC_TRAIL", "onConnectionFailed");
     }
 }
