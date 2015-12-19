@@ -5,6 +5,7 @@ package artictrail.hanshotfirst.ms.asrc.artictrail.database.model;
  */
 public enum LocationType {
 
+    ME,
     FAV,
     DOCK,
 
