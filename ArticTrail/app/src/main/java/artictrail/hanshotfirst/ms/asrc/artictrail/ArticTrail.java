@@ -50,6 +50,7 @@ import java.util.UUID;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SaveLocationDialog;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.PreyListDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
@@ -328,6 +329,7 @@ public class ArticTrail extends AppCompatActivity
                 return true;
             case R.id.save_current_location:
                 performSaveLocation();
+                MapAccessor.getInstance().addPointToMap(MapAccessor.getInstance().getCurrentLocation(), "Favorite", LocationType.FAV);
                 return true;
             case R.id.sos:
                 Toast.makeText(this, "Contacting Ranger Station... Lat = " + lat +" Lon = " + lon, Toast.LENGTH_LONG).show();
@@ -348,6 +350,8 @@ public class ArticTrail extends AppCompatActivity
 
         if (id == R.id.nav_kills) {
             // Handle the camera action
+            PreyListDialog pld = new PreyListDialog(this, mDatabaseManager);
+            pld.show();
         } else if (id == R.id.nav_locations) {
 
         } else if (id == R.id.nav_help) {

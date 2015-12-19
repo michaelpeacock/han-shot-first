@@ -119,6 +119,7 @@ public class MapAccessor implements Serializable {
                 break;
             case FAV:
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                marker.draggable(true);
                 break;
             case DESTINATION:
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));

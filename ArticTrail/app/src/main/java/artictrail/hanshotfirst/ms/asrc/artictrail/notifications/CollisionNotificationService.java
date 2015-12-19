@@ -87,36 +87,40 @@ public class CollisionNotificationService extends Service {
                 android.location.Location myLocation = (android.location.Location)MapAccessor.getInstance().getCurrentLocation();
 
                 for (artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Location temp : locationList) {
-                    //check if location is within X miles of user
-                    Log.d("GARRY", "" + temp.getLatitude() + ", " + temp.getLongitude());
-                    Log.d("GARRY", "" + temp.getId());
 
-                    boolean isFound = false;
-                    for (int i = 0; i < pairs.size(); i++) {
-                        if (pairs.get(i).mDatabaseId == temp.getId()) {
-                            MapAccessor.getInstance().removePointFromMap(pairs.get(i).mMarkerId);
+                    if (temp.getLocationType() == LocationType.HUNTER) {
+                        //check if location is within X miles of user
+
+                        Log.d("GARRY", "" + temp.getLatitude() + ", " + temp.getLongitude());
+                        Log.d("GARRY", "" + temp.getId());
+
+                        boolean isFound = false;
+                        for (int i = 0; i < pairs.size(); i++) {
+                            if (pairs.get(i).mDatabaseId == temp.getId()) {
+                                MapAccessor.getInstance().removePointFromMap(pairs.get(i).mMarkerId);
+                            }
                         }
-                    }
 
-                    android.location.Location androidLocation = new android.location.Location("temp");
-                    androidLocation.setLatitude(temp.getLatitude());
-                    androidLocation.setLongitude(temp.getLongitude());
-                    int pointId = MapAccessor.getInstance().addPointToMap(androidLocation, "Hunter", LocationType.HUNTER);
+                        android.location.Location androidLocation = new android.location.Location("temp");
+                        androidLocation.setLatitude(temp.getLatitude());
+                        androidLocation.setLongitude(temp.getLongitude());
+                        int pointId = MapAccessor.getInstance().addPointToMap(androidLocation, "Hunter", LocationType.HUNTER);
 
-                    DbMarkerIdPair dbPair = new DbMarkerIdPair(temp.getId(), pointId);
-                    pairs.add(dbPair);
+                        DbMarkerIdPair dbPair = new DbMarkerIdPair(temp.getId(), pointId);
+                        pairs.add(dbPair);
 
-                    if(getApplicationContext() != null && myLocation != null && androidLocation != null) {
-                        if (myLocation.distanceTo(androidLocation) < 6) {
-                            mNotificationBuilder.setSmallIcon(R.drawable.ic_menu_share);
-                            mNotificationBuilder.setContentTitle("WARNING - Hunter Nearby");
-                            mNotificationBuilder.setContentText("Use caution");
-                            mNotificationBuilder.setVibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500});
-                            mNotificationBuilder.setLights(Color.RED, 3000, 3000);
-                            Uri alarmSound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.imperial_march);
-                            mNotificationBuilder.setSound(alarmSound);
+                        if (getApplicationContext() != null && myLocation != null && androidLocation != null) {
+                            if (myLocation.distanceTo(androidLocation) < 6) {
+                                mNotificationBuilder.setSmallIcon(R.drawable.ic_menu_share);
+                                mNotificationBuilder.setContentTitle("WARNING - Hunter Nearby");
+                                mNotificationBuilder.setContentText("Use caution");
+                                mNotificationBuilder.setVibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500});
+                                mNotificationBuilder.setLights(Color.RED, 3000, 3000);
+                                Uri alarmSound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.imperial_march);
+                                mNotificationBuilder.setSound(alarmSound);
 
-                            mNotificationManager.notify(42, mNotificationBuilder.build());
+                                mNotificationManager.notify(42, mNotificationBuilder.build());
+                            }
                         }
                     }
                 }
