@@ -166,7 +166,7 @@ public class ArticTrail extends AppCompatActivity
         }
 
         MapAccessor.getInstance().initialize(this, this, this);
-        
+
         initBluetooth();
 
 

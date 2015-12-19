@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/kill_title"
         android:maxLines="1"
         android:hint="Title"
@@ -14,32 +14,38 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/kill_description"
         android:lines="4"
         android:maxLines="4"
         android:hint="Description"
         android:inputType="textMultiLine"
+        android:layout_below="@id/kill_title"
         />
 
     <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:icon="@android:drawable/ic_menu_camera"
-        android:id="@+id/camera_button" />
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@android:drawable/ic_menu_camera"
+        android:id="@+id/camera_button"
+        android:layout_below="@id/kill_description"
+        android:layout_alignParentLeft="true"
+        android:minHeight="40dp"/>
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/kill_image"
-        android:contentDescription="Kill picture" />
+        android:contentDescription="Kill picture"
+        android:layout_below="@id/camera_button"
+        android:minHeight="160dp"/>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/kill_image"
         android:gravity="right">
-
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
@@ -53,4 +59,4 @@
             android:text="Cancel"
             android:id="@+id/cancel_action" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
