@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.location.LocationManager;
 import android.location.Criteria;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.util.UUID;
@@ -57,6 +58,8 @@ import eu.hgross.blaubot.core.ILifecycleListener;
 import eu.hgross.blaubot.messaging.BlaubotMessage;
 import eu.hgross.blaubot.messaging.IBlaubotChannel;
 import eu.hgross.blaubot.messaging.IBlaubotMessageListener;
+
+import static android.view.View.VISIBLE;
 
 public class ArticTrail extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -89,13 +92,13 @@ public class ArticTrail extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mMapAccessor = new MapAccessor();
+        MapAccessor.getInstance();
 
         FloatingActionButton kill_fab = (FloatingActionButton) findViewById(R.id.kill);
         kill_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Location location = getCurrentLocation();
+                Location location = MapAccessor.getInstance().getCurrentLocation();
                 double lat = 0, lon = 0;
                 if ( location != null ) {
                     lat = location.getLatitude();
@@ -116,7 +119,7 @@ public class ArticTrail extends AppCompatActivity
         sightings_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Location location = getCurrentLocation();
+                Location location = MapAccessor.getInstance().getCurrentLocation();
                 double lat = 0, lon = 0;
                 if ( location != null ) {
                     lat = location.getLatitude();
@@ -151,10 +154,12 @@ public class ArticTrail extends AppCompatActivity
             e.printStackTrace();
         }
 
-        mMapAccessor.initialize(this, this, this);
+        MapAccessor.getInstance().initialize(this, this, this);
 
-        //Notification Stuff
-        startService(new Intent(getBaseContext(), CollisionNotificationService.class));
+        //Collision Detection
+        Intent collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
+        startService(collisionService);
+
         initBluetooth();
 
 
@@ -221,8 +226,8 @@ public class ArticTrail extends AppCompatActivity
                     }
                 });
 
-                Location location = getCurrentLocation();
-                if(location != null) {
+                Location location = MapAccessor.getInstance().getCurrentLocation();
+                if (location != null) {
                     double lat = location.getLatitude();
                     double lon = location.getLongitude();
 
@@ -273,7 +278,7 @@ public class ArticTrail extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap map) {
-        mMapAccessor.addMap(map);
+        MapAccessor.getInstance().addMap(map);
     }
 
     @Override
@@ -300,9 +305,25 @@ public class ArticTrail extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (item.getItemId()) {
+            case R.id.boat_mode:
+                showBoatMode();
+                return true;
+            case R.id.hunt_mode:
+                showHuntMode();
+                return true;
+            case R.id.save_current_location:
+                //do some cool stuff
+                return true;
+            case R.id.sos:
+                //help somebody
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
 
-        return super.onOptionsItemSelected(item);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -336,7 +357,7 @@ public class ArticTrail extends AppCompatActivity
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mMapAccessor.mClient.connect();
+        MapAccessor.getInstance().mClient.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "ArticTrail Page", // TODO: Define a title for the content shown.
@@ -348,8 +369,8 @@ public class ArticTrail extends AppCompatActivity
                 Uri.parse("android-app://artictrail.hanshotfirst.ms.asrc.artictrail/http/host/path")
         );
 
-        if (mMapAccessor.mClient != null) {
-            mMapAccessor.mClient.connect();
+        if (MapAccessor.getInstance().mClient != null) {
+            MapAccessor.getInstance().mClient.connect();
         }
 
     }
@@ -371,7 +392,7 @@ public class ArticTrail extends AppCompatActivity
                 Uri.parse("android-app://artictrail.hanshotfirst.ms.asrc.artictrail/http/host/path")
         );
 
-        mMapAccessor.mClient.disconnect();
+        MapAccessor.getInstance().mClient.disconnect();
         stopService(new Intent(getBaseContext(), CollisionNotificationService.class));
 
         blaubot.stopBlaubot();
@@ -383,10 +404,10 @@ public class ArticTrail extends AppCompatActivity
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        Location location = getCurrentLocation();
+        Location location = MapAccessor.getInstance().getCurrentLocation();
         if(location != null) {
-            mMapAccessor.centerMapOnCurrentLocation(location);
-            mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
+            MapAccessor.getInstance().centerMapOnCurrentLocation(location);
+            MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
         }
 
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -402,16 +423,6 @@ public class ArticTrail extends AppCompatActivity
 //                mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
 //            }
 //        }
-    }
-
-    private Location getCurrentLocation() {
-        Location ret = null;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        } else {
-            ret = LocationServices.FusedLocationApi.getLastLocation(mMapAccessor.mClient);
-        }
-        return ret;
     }
 
     @Override
@@ -447,4 +458,35 @@ public class ArticTrail extends AppCompatActivity
         super.onDestroy();
         mDatabaseManager.onDestroy();
     }
+
+    private void showBoatMode()
+    {
+        LinearLayout huntlinearLayout = (LinearLayout)findViewById(R.id.hunt_view);
+        LinearLayout boatlinearLayout = (LinearLayout)findViewById(R.id.boat_view);
+        if(boatlinearLayout.getVisibility() == VISIBLE) {
+            boatlinearLayout.setVisibility(View.INVISIBLE);
+            huntlinearLayout.setVisibility(View.INVISIBLE);
+        }
+
+        else {
+            huntlinearLayout.setVisibility(View.INVISIBLE);
+            boatlinearLayout.setVisibility(VISIBLE);
+        }
+
+    }
+    private void showHuntMode()
+    {
+        LinearLayout huntlinearLayout = (LinearLayout)findViewById(R.id.hunt_view);
+        LinearLayout boatlinearLayout = (LinearLayout)findViewById(R.id.boat_view);
+        if(huntlinearLayout.getVisibility() == VISIBLE) {
+            boatlinearLayout.setVisibility(View.INVISIBLE);
+            huntlinearLayout.setVisibility(View.INVISIBLE);
+
+        }
+        else {
+            boatlinearLayout.setVisibility(View.INVISIBLE);
+            huntlinearLayout.setVisibility(VISIBLE);
+        }
+    }
+
 }
