@@ -45,10 +45,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.AccountDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SaveLocationDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.PreyListDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
@@ -96,6 +99,18 @@ public class ArticTrail extends AppCompatActivity
         setContentView(R.layout.activity_artic_trail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        List<Integer> deleteList = new ArrayList<Integer>();
+        for(artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Location location :
+                mDatabaseManager.getLocationTable().queryForAll()) {
+            if(location.getLocationType() == LocationType.HUNTER) {
+                deleteList.add(location.getId());
+            }
+        }
+
+        for(Integer i : deleteList) {
+            mDatabaseManager.getLocationTable().deleteById(i);
+        }
 
         MapAccessor.getInstance();
 
@@ -357,7 +372,8 @@ public class ArticTrail extends AppCompatActivity
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_user_info) {
-
+            AccountDialog account_dialog = new AccountDialog(this, mDatabaseManager);
+            account_dialog.show();
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
