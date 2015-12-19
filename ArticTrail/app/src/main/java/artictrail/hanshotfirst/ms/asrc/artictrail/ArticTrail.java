@@ -43,6 +43,7 @@ import android.location.Criteria;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.UUID;
 
@@ -311,7 +312,13 @@ public class ArticTrail extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Location location = MapAccessor.getInstance().getCurrentLocation();
+        double lat = 0;
+        double lon = 0;
+        if (location != null) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+        }
         switch (item.getItemId()) {
             case R.id.boat_mode:
                 showBoatMode();
@@ -323,7 +330,7 @@ public class ArticTrail extends AppCompatActivity
                 performSaveLocation();
                 return true;
             case R.id.sos:
-                //help somebody
+                Toast.makeText(this, "Contacting Ranger Station... Lat = " + lat +" Lon = " + lon, Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
