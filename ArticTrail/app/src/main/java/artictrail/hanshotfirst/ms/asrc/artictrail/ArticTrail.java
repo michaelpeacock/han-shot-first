@@ -160,7 +160,7 @@ public class ArticTrail extends AppCompatActivity
         //Collision Detection
         Intent collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
         startService(collisionService);
-        
+
         initBluetooth();
 
 

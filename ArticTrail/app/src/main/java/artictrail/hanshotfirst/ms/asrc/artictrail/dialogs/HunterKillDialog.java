@@ -142,7 +142,7 @@ public class HunterKillDialog extends Dialog implements
                 Log.d("ArcticTrail","No photoFile Exception");
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                Log.d("ArcticTrail","photoFile EXCEPTION!!!");
+                Log.d("ArcticTrail","photoFile EXCEPTION!!!" + ex.getMessage());
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
