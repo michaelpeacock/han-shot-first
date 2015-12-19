@@ -46,9 +46,7 @@ import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
-<<<<<<< HEAD
 import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.CollisionNotificationService;
-=======
 import eu.hgross.blaubot.android.BlaubotAndroid;
 import eu.hgross.blaubot.android.BlaubotAndroidFactory;
 import eu.hgross.blaubot.core.IBlaubotDevice;
@@ -56,7 +54,6 @@ import eu.hgross.blaubot.core.ILifecycleListener;
 import eu.hgross.blaubot.messaging.BlaubotMessage;
 import eu.hgross.blaubot.messaging.IBlaubotChannel;
 import eu.hgross.blaubot.messaging.IBlaubotMessageListener;
->>>>>>> origin/master
 
 public class ArticTrail extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -118,10 +115,8 @@ public class ArticTrail extends AppCompatActivity
 
         mMapAccessor.initialize(this, this, this);
 
-<<<<<<< HEAD
         //Notification Stuff
         startService(new Intent(getBaseContext(), CollisionNotificationService.class));
-=======
         initBluetooth();
 
 
@@ -211,7 +206,6 @@ public class ArticTrail extends AppCompatActivity
 
             }
         });
->>>>>>> origin/master
     }
 
     @Override
@@ -315,13 +309,10 @@ public class ArticTrail extends AppCompatActivity
         );
 
         mMapAccessor.mClient.disconnect();
-<<<<<<< HEAD
         stopService(new Intent(getBaseContext(), CollisionNotificationService.class));
-=======
 
         blaubot.stopBlaubot();
 
->>>>>>> origin/master
     }
 
     @Override
@@ -354,6 +345,7 @@ public class ArticTrail extends AppCompatActivity
         Location ret = null;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        } else {
             ret = LocationServices.FusedLocationApi.getLastLocation(mMapAccessor.mClient);
         }
         return ret;
