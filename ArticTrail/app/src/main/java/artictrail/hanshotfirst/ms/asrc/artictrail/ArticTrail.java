@@ -45,11 +45,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.LocationListDialog;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.AccountDialog;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SaveLocationDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.PreyListDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
@@ -75,6 +79,7 @@ public class ArticTrail extends AppCompatActivity
 
     private HunterKillDialog hunter_kill_dialog;
     private SightingsDialog sightings_dialog;
+    private SaveLocationDialog save_location_dialog;
 
     static final int REQUEST_KILL_IMAGE_CAPTURE = 1;
     static final int REQUEST_SIGHTINGS_IMAGE_CAPTURE = 2;
@@ -96,6 +101,18 @@ public class ArticTrail extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        List<Integer> deleteList = new ArrayList<Integer>();
+        for(artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Location location :
+                mDatabaseManager.getLocationTable().queryForAll()) {
+            if(location.getLocationType() == LocationType.HUNTER) {
+                deleteList.add(location.getId());
+            }
+        }
+
+        for(Integer i : deleteList) {
+            mDatabaseManager.getLocationTable().deleteById(i);
+        }
+
         MapAccessor.getInstance();
 
         FloatingActionButton kill_fab = (FloatingActionButton) findViewById(R.id.kill);
@@ -104,7 +121,7 @@ public class ArticTrail extends AppCompatActivity
             public void onClick(View view) {
                 Location location = MapAccessor.getInstance().getCurrentLocation();
                 double lat = 0, lon = 0;
-                if ( location != null ) {
+                if (location != null) {
                     lat = location.getLatitude();
                     lon = location.getLongitude();
                 }
@@ -311,7 +328,13 @@ public class ArticTrail extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Location location = MapAccessor.getInstance().getCurrentLocation();
+        double lat = 0;
+        double lon = 0;
+        if (location != null) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+        }
         switch (item.getItemId()) {
             case R.id.boat_mode:
                 showBoatMode();
@@ -320,10 +343,11 @@ public class ArticTrail extends AppCompatActivity
                 showHuntMode();
                 return true;
             case R.id.save_current_location:
+                //performSaveLocation();
                 MapAccessor.getInstance().addPointToMap(MapAccessor.getInstance().getCurrentLocation(), "Favorite", LocationType.FAV);
                 return true;
             case R.id.sos:
-                //help somebody
+                Toast.makeText(this, "Contacting Ranger Station... Lat = " + lat +" Lon = " + lon, Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -349,7 +373,8 @@ public class ArticTrail extends AppCompatActivity
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_user_info) {
-
+            AccountDialog account_dialog = new AccountDialog(this, mDatabaseManager);
+            account_dialog.show();
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -495,6 +520,23 @@ public class ArticTrail extends AppCompatActivity
             }
             PeriodicMutex.getInstance().setPeriodicActive();
             startService(collisionService);
+        }
+    }
+
+    private void performSaveLocation()
+    {
+        Location location = MapAccessor.getInstance().getCurrentLocation();
+        double lat = 0, lon = 0;
+        if (location != null) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+
+            save_location_dialog = new SaveLocationDialog(
+                    ArticTrail.this,
+                    mDatabaseManager,
+                    lat,
+                    lon);
+            save_location_dialog.show();
         }
     }
 

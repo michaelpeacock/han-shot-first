@@ -5,6 +5,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Mike Test</string>
+    <string name="save_location_prompt">Location Type</string>
+
 
     <string name="google_app_id">neat-responder-116319</string>
 </resources>
