@@ -3,24 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/save_current_location"
-        android:icon="@drawable/ic_scout"
-        android:title="Hello"
+        android:icon="@mipmap/save_location"
+        android:title="save_location"
         app:showAsAction="always"/>
     <item
     android:id="@+id/boat_mode"
-    android:icon="@drawable/ic_scout"
-    android:title="Hello"
+    android:icon="@mipmap/ic_rowing_black"
+    android:title="Boat Mode"
     app:showAsAction="always"/>
     <item
     android:id="@+id/hunt_mode"
-    android:icon="@drawable/ic_menu_camera"
-    android:title="Hello"
+    android:icon="@mipmap/hunting_mode_icon"
+    android:title="Hunt Mode"
     app:showAsAction="always"/>
     <item
     android:id="@+id/sos"
-    android:icon="@drawable/ic_menu_camera"
-    android:title="Hello"
+    android:icon="@mipmap/city_hospital"
+    android:title="SOS"
     app:showAsAction="always"/>
-
-
 </menu>
