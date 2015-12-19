@@ -348,6 +348,8 @@ public class ArticTrail extends AppCompatActivity
                 return true;
             case R.id.sos:
                 Toast.makeText(this, "Contacting Ranger Station... Lat = " + lat +" Lon = " + lon, Toast.LENGTH_LONG).show();
+                if(!blaubot.isStarted())
+                    blaubot.startBlaubot();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
