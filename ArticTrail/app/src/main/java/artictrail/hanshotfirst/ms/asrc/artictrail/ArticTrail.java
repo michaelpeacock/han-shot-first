@@ -328,7 +328,7 @@ public class ArticTrail extends AppCompatActivity
                 showHuntMode();
                 return true;
             case R.id.save_current_location:
-                performSaveLocation();
+                //performSaveLocation();
                 MapAccessor.getInstance().addPointToMap(MapAccessor.getInstance().getCurrentLocation(), "Favorite", LocationType.FAV);
                 return true;
             case R.id.sos:
