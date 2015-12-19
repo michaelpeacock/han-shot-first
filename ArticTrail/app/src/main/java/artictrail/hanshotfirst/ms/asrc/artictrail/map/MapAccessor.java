@@ -1,7 +1,10 @@
 package artictrail.hanshotfirst.ms.asrc.artictrail.map;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -20,14 +23,19 @@ public class MapAccessor {
 
     private GoogleMap mGoogleMap;
     public GoogleApiClient mClient;
+    private Context mContext;
     private static int REQUEST_CODE_RECOVER_PLAY_SERVICES = 200;
-
-    public void addClient(GoogleApiClient client) {
-        mClient = client;
-    }
 
     public void addMap(GoogleMap map) {
         mGoogleMap = map;
+
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //TODO do permission processing here
+        }
+        else {
+            mGoogleMap.setMyLocationEnabled(true);
+        }
     }
 
     public void initialize(Context context, GoogleApiClient.ConnectionCallbacks callback, GoogleApiClient.OnConnectionFailedListener listener) {
@@ -68,10 +76,13 @@ public class MapAccessor {
                 .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
                 .zoom(18)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
-                .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                .tilt(0)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
 
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mGoogleMap.getUiSettings().setCompassEnabled(true);
     }
 
     public boolean checkGooglePlayServices(Context context) {
@@ -90,6 +101,6 @@ public class MapAccessor {
                 .addApi(LocationServices.API)
                 .build();
 
-        addClient(mClient);
+        mContext = context;
     }
 }

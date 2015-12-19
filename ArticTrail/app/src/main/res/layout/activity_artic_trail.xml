@@ -8,18 +8,28 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map"
-        tools:context=".MapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:orientation="vertical">
 
-    <include
-        layout="@layout/app_bar_artic_trail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="60dp"
+            android:id="@+id/map"
+            tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+        <include
+            layout="@layout/app_bar_artic_trail"
+            android:id="@+id/app_bar_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom" />
+
+    </FrameLayout>
 
 <android.support.design.widget.NavigationView
     android:id="@+id/nav_view"
