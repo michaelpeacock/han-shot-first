@@ -47,6 +47,7 @@ import java.util.UUID;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.CollisionNotificationService;
@@ -67,9 +68,13 @@ public class ArticTrail extends AppCompatActivity
 
     private static final String TAG = ArticTrail.class.getSimpleName();
 
-    private HunterKillDialog hkd;
+    private MapAccessor mMapAccessor;
+
+    private HunterKillDialog hunter_kill_dialog;
+    private SightingsDialog sightings_dialog;
 
     static final int REQUEST_KILL_IMAGE_CAPTURE = 1;
+    static final int REQUEST_SIGHTINGS_IMAGE_CAPTURE = 2;
     private BlaubotAndroid blaubot ;
     private IBlaubotChannel channel;
     private boolean mConnected = false;
@@ -89,8 +94,8 @@ public class ArticTrail extends AppCompatActivity
 
         MapAccessor.getInstance();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton kill_fab = (FloatingActionButton) findViewById(R.id.kill);
+        kill_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Location location = MapAccessor.getInstance().getCurrentLocation();
@@ -99,14 +104,34 @@ public class ArticTrail extends AppCompatActivity
                     lat = location.getLatitude();
                     lon = location.getLongitude();
                 }
-                hkd = new HunterKillDialog(ArticTrail.this,
+                hunter_kill_dialog = new HunterKillDialog(
+                        ArticTrail.this,
+                        REQUEST_KILL_IMAGE_CAPTURE,
                         mDatabaseManager,
                         lat,
                         lon);
-                hkd.show();
+                hunter_kill_dialog.show();
+            }
+        });
 
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+
+        FloatingActionButton sightings_fab = (FloatingActionButton) findViewById(R.id.sightings);
+        sightings_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Location location = MapAccessor.getInstance().getCurrentLocation();
+                double lat = 0, lon = 0;
+                if ( location != null ) {
+                    lat = location.getLatitude();
+                    lon = location.getLongitude();
+                }
+                sightings_dialog = new SightingsDialog(
+                        ArticTrail.this,
+                        REQUEST_SIGHTINGS_IMAGE_CAPTURE,
+                        mDatabaseManager,
+                        lat,
+                        lon);
+                sightings_dialog.show();
             }
         });
 
@@ -232,19 +257,21 @@ public class ArticTrail extends AppCompatActivity
             case REQUEST_KILL_IMAGE_CAPTURE:
                 if (resultCode == Activity.RESULT_OK) {
                     Log.d("ArcticTrail", "In onActivityResult(): Kill Image OK");
-                    hkd.setKillImage();
-//                    if ( data != null ) {
-//                        Bundle extras = data.getExtras();
-//                        Bitmap imageBitmap = (Bitmap) extras.get("data");
-//                        hkd.setKillImage(imageBitmap);
-//                    }
-//                    else
-//                    {
-//                        Log.d("ArcticTrail", "Kill Image data NULL!!!");
-//                    }
+                    hunter_kill_dialog.setKillImage();
                 } else {
                     Log.d("ArcticTrail", "Kill Image Result NOT OK!!!");
                 }
+                break;
+            case REQUEST_SIGHTINGS_IMAGE_CAPTURE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.d("ArcticTrail", "In onActivityResult(): Sightings Image OK");
+                    sightings_dialog.setSightingsImage();
+                } else {
+                    Log.d("ArcticTrail", "Sightings Image Result NOT OK!!!");
+                }
+                break;
+            default:
+                break;
 
         }
     }

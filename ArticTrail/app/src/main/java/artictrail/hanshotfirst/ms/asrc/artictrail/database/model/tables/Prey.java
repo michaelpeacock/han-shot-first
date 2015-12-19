@@ -1,10 +1,12 @@
 package artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.Entity;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationEntity;
+import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.PreyType;
 
 /**
  * Created by Owner on 12/18/2015.
@@ -23,6 +25,9 @@ public class Prey extends LocationEntity {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
+
+    @DatabaseField(columnName = "type", dataType = DataType.ENUM_INTEGER)
+    private PreyType type;
 
     public Prey() {
 
@@ -58,5 +63,13 @@ public class Prey extends LocationEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public PreyType getType() {
+        return type;
+    }
+
+    public void setType(PreyType type) {
+        this.type = type;
     }
 }

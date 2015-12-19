@@ -1,35 +1,38 @@
+/**
+ * Created by Dad on 12/19/2015.
+ */
 package artictrail.hanshotfirst.ms.asrc.artictrail.dialogs;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+        import android.app.Activity;
+        import android.app.Dialog;
+        import android.content.Intent;
+        import android.graphics.Bitmap;
+        import android.graphics.BitmapFactory;
+        import android.net.Uri;
+        import android.os.Bundle;
+        import android.os.Environment;
+        import android.provider.MediaStore;
+        import android.util.Log;
+        import android.view.View;
+        import android.widget.Button;
+        import android.widget.EditText;
+        import android.widget.ImageButton;
+        import android.widget.ImageView;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+        import java.io.File;
+        import java.io.IOException;
+        import java.text.SimpleDateFormat;
+        import java.util.Date;
 
-import artictrail.hanshotfirst.ms.asrc.artictrail.R;
-import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
-import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.PreyType;
-import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Prey;
+        import artictrail.hanshotfirst.ms.asrc.artictrail.R;
+        import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
+        import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.PreyType;
+        import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.tables.Prey;
 
 /**
  * Created by Dad on 12/18/2015.
  */
-public class HunterKillDialog extends Dialog implements
+public class SightingsDialog extends Dialog implements
         android.view.View.OnClickListener {
 
     public Activity parent_activity;
@@ -40,17 +43,19 @@ public class HunterKillDialog extends Dialog implements
     private Prey current_prey_entry;
     private EditText title_text, description_text;
     String current_photo_path;
-    private ImageView kill_image;
+    private ImageView sightings_image;
     private File storageDir;
     private File photoFile;
     private DatabaseManager database_manager;
 
 
-    public HunterKillDialog(Activity a,
-                            int image_capture_id_in,
-                            DatabaseManager db_mgr,
-                            double lat,
-                            double lon ) {
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    public SightingsDialog(Activity a,
+                           int image_capture_id_in,
+                           DatabaseManager db_mgr,
+                           double lat,
+                           double lon ) {
         super(a);
         // TODO Auto-generated constructor stub
         this.parent_activity = a;
@@ -62,30 +67,25 @@ public class HunterKillDialog extends Dialog implements
         current_prey_entry = new Prey();
         current_prey_entry.setLatitude(lat);
         current_prey_entry.setLongitude(lon);
-
-//        current_prey_entry.setLatitude();
     }
 
-    public void setKillImage() {
-        Log.d("ArcticTrail","In setKillImage: photoFile.getAbsolutePath(): " + photoFile.getAbsolutePath());
-        Bitmap kill_bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-        if ( kill_bitmap != null ) {
-            kill_image.setImageBitmap(kill_bitmap);
+    public void setSightingsImage() {
+        Log.d("ArcticTrail","In setSightingsImage: photoFile.getAbsolutePath(): " + photoFile.getAbsolutePath());
+        Bitmap sightings_bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+        if ( sightings_bitmap != null ) {
+            sightings_image.setImageBitmap(sightings_bitmap);
             galleryAddPic();
         }
         else {
-            Log.d("ArcticTrail", "kill_bitmap is NULL!!!");
+            Log.d("ArcticTrail", "sightings_bitmap is NULL!!!");
         }
     }
 
-//    public void setKillImage(Bitmap imageBitmap) {
-//        kill_image.setImageBitmap(imageBitmap);
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Tag Kill");
+        setTitle("Tag Sightings");
         setContentView(R.layout.kill_dialogue);
         title_text = (EditText) findViewById(R.id.kill_title);
         description_text = (EditText) findViewById(R.id.kill_description);
@@ -95,7 +95,7 @@ public class HunterKillDialog extends Dialog implements
         ok.setOnClickListener(this);
         cancel.setOnClickListener(this);
         camera_button.setOnClickListener(this);
-        kill_image = (ImageView) findViewById(R.id.kill_image);
+        sightings_image = (ImageView) findViewById(R.id.kill_image);
 
 
     }
@@ -121,7 +121,7 @@ public class HunterKillDialog extends Dialog implements
     private void doSave() {
         current_prey_entry.setName(title_text.getText().toString());
         current_prey_entry.setDescription(description_text.getText().toString());
-        current_prey_entry.setType(PreyType.HUNT);
+        current_prey_entry.setType(PreyType.SIGHTING);
 
         if ( storageDir.getAbsolutePath() != null ) {
             current_prey_entry.setImagePath(storageDir.getAbsolutePath());
