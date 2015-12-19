@@ -2,8 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/save_current_location"
+        android:icon="@drawable/ic_scout"
+        android:title="Hello"
+        app:showAsAction="always"/>
+    <item
+    android:id="@+id/boat_mode"
+    android:icon="@drawable/ic_scout"
+    android:title="Hello"
+    app:showAsAction="always"/>
+    <item
+    android:id="@+id/hunt_mode"
+    android:icon="@drawable/ic_menu_camera"
+    android:title="Hello"
+    app:showAsAction="always"/>
+    <item
+    android:id="@+id/sos"
+    android:icon="@drawable/ic_menu_camera"
+    android:title="Hello"
+    app:showAsAction="always"/>
+
+
 </menu>
