@@ -43,11 +43,13 @@ import android.location.Criteria;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.UUID;
 
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.DatabaseManager;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.LocationListDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.PreyListDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
@@ -227,7 +229,6 @@ public class ArticTrail extends AppCompatActivity
                         dbLoc.setLongitude(lon);
                         dbLoc.setLocationType(LocationType.HUNTER);
                         mDatabaseManager.getLocationTable().create(dbLoc);
-
                         Log.i("BLUETOOTH_MESSAGE", "Got a location: " + lat + ", " + lon);
                     }
                 });
@@ -343,7 +344,8 @@ public class ArticTrail extends AppCompatActivity
             PreyListDialog pld = new PreyListDialog(this, mDatabaseManager);
             pld.show();
         } else if (id == R.id.nav_locations) {
-
+            LocationListDialog lld = new LocationListDialog(this, mDatabaseManager);
+            lld.show();
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_user_info) {
