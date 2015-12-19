@@ -37,6 +37,8 @@ import android.location.Criteria;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
+
 public class ArticTrail extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -57,8 +59,11 @@ public class ArticTrail extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                HunterKillDialog hkd = new HunterKillDialog(ArticTrail.this);
+                hkd.show();
+
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
