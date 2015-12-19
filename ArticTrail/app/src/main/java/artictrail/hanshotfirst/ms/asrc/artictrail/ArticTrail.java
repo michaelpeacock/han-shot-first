@@ -51,6 +51,7 @@ import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.SightingsDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
 import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.CollisionNotificationService;
+import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.PeriodicMutex;
 import eu.hgross.blaubot.android.BlaubotAndroid;
 import eu.hgross.blaubot.android.BlaubotAndroidFactory;
 import eu.hgross.blaubot.core.IBlaubotDevice;
@@ -68,8 +69,6 @@ public class ArticTrail extends AppCompatActivity
 
     private static final String TAG = ArticTrail.class.getSimpleName();
 
-    private MapAccessor mMapAccessor;
-
     private HunterKillDialog hunter_kill_dialog;
     private SightingsDialog sightings_dialog;
 
@@ -80,6 +79,7 @@ public class ArticTrail extends AppCompatActivity
     private boolean mConnected = false;
     private int mMarkerId = 0;
     private DatabaseManager mDatabaseManager;
+    private Intent collisionService;
 
     public ArticTrail() {
         mDatabaseManager = new DatabaseManager(this);
@@ -114,6 +114,13 @@ public class ArticTrail extends AppCompatActivity
             }
         });
 
+        FloatingActionButton init_trip = (FloatingActionButton) findViewById(R.id.init_dest);
+        init_trip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MapAccessor.getInstance().setDestinationToggle(true);
+            }
+        });
 
         FloatingActionButton sightings_fab = (FloatingActionButton) findViewById(R.id.sightings);
         sightings_fab.setOnClickListener(new View.OnClickListener() {
@@ -156,9 +163,6 @@ public class ArticTrail extends AppCompatActivity
 
         MapAccessor.getInstance().initialize(this, this, this);
 
-        //Collision Detection
-        Intent collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
-        startService(collisionService);
 
         initBluetooth();
 
@@ -411,22 +415,8 @@ public class ArticTrail extends AppCompatActivity
             }
 
             MapAccessor.getInstance().centerMapOnCurrentLocation(location);
-            mMarkerId = MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
+            //mMarkerId = MapAccessor.getInstance().addPointToMap(location, "Me", LocationType.ME);
         }
-
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//        } else {
-//            Location location = LocationServices.FusedLocationApi.getLastLocation(
-//                    mMapAccessor.mClient);
-//
-//            if (location != null) {
-//                mMapAccessor.centerMapOnCurrentLocation(location);
-//
-//                mMapAccessor.addPointToMap(location, "Me", LocationType.ME);
-//            }
-//        }
     }
 
     @Override
@@ -486,10 +476,19 @@ public class ArticTrail extends AppCompatActivity
             boatlinearLayout.setVisibility(View.INVISIBLE);
             huntlinearLayout.setVisibility(View.INVISIBLE);
 
+            PeriodicMutex.getInstance().setPeriodicInactive();
+            stopService(collisionService);
         }
         else {
             boatlinearLayout.setVisibility(View.INVISIBLE);
             huntlinearLayout.setVisibility(VISIBLE);
+
+            //Collision Detection
+            if (collisionService == null) {
+                collisionService = new Intent(getBaseContext(), CollisionNotificationService.class);
+            }
+            PeriodicMutex.getInstance().setPeriodicActive();
+            startService(collisionService);
         }
     }
 
