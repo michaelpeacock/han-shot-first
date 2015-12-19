@@ -3,6 +3,7 @@ package artictrail.hanshotfirst.ms.asrc.artictrail;
 import android.*;
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import android.widget.RelativeLayout;
 import artictrail.hanshotfirst.ms.asrc.artictrail.database.model.LocationType;
 import artictrail.hanshotfirst.ms.asrc.artictrail.map.MapAccessor;
 import artictrail.hanshotfirst.ms.asrc.artictrail.dialogs.HunterKillDialog;
+import artictrail.hanshotfirst.ms.asrc.artictrail.notifications.CollisionNotificationService;
 
 public class ArticTrail extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -89,6 +91,9 @@ public class ArticTrail extends AppCompatActivity
         }
 
         mMapAccessor.initialize(this, this, this);
+
+        //Notification Stuff
+        startService(new Intent(getBaseContext(), CollisionNotificationService.class));
     }
 
     @Override
@@ -194,6 +199,7 @@ public class ArticTrail extends AppCompatActivity
         );
 
         mMapAccessor.mClient.disconnect();
+        stopService(new Intent(getBaseContext(), CollisionNotificationService.class));
     }
 
     @Override
